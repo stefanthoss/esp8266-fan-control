@@ -25,3 +25,9 @@ The PWM fan is powered (yellow wire) via the VBUS pin which provides 5V directly
 This software uses Adafruit's ESP8266 Feather board with the Arduino IDE as described [here](https://learn.adafruit.com/adafruit-feather-huzzah-esp8266/using-arduino-ide).
 
 ## Behavior
+
+Adapt the constants at the beginning of the Arduino sketch to change the values.
+
+![Temperature Fan Graph](temperature-fan-graph.png)
+
+The fan does not spin below `minTemp`. As soon as the temperature rises above `minTemp`, the fan starts spinning at `minFanSpeedPercent`. This is implemented because a lot of fans have a minimum rotational speed (e.g. the Noctua fan has a minimum speed of 450 RPM and a maximum speed of 1900 RPM, thus the 24% minimum). The fan starts spinning faster in a linear way until the temperature hits `maxTemp` at which the fan spins at 100%.
