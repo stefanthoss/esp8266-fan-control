@@ -5,12 +5,12 @@
 #define FAN_PIN 12
 #define SIGNAL_PIN 13
 
-Adafruit_BME280 bme; // I2C
+#define DELAY_TIME 10000 // time between measurements [ms]
+#define MIN_FAN_SPEED_PERCENT 24 // minimum fan speed [%]
+#define MIN_TEMP 25 // turn fan off below [deg C]
+#define MAX_TEMP 40 // turn fan to full speed above [deg C]
 
-const int delayTime = 1000; // time between measurements [ms]
-const int minFanSpeedPercent = 24; // minimum fan speed [%]
-const int minTemp = 25; // turn fan off below [deg C]
-const int maxTemp = 40; // turn fan to full speed above [deg C]
+Adafruit_BME280 bme; // I2C
 
 void setup() {
   Serial.begin(9600);
@@ -38,7 +38,7 @@ int getFanSpeedRpm() {
 }
 
 void setFanSpeedPercent(int p) {
-  int value = (p / 100.0) * 1024;
+  int value = (p / 100.0) * 255;
   analogWrite(FAN_PIN, value);
 }
 
@@ -50,12 +50,12 @@ void loop() {
 
   int fanSpeedPercent, actualFanSpeedRpm;
 
-  if (temp < minTemp) {
+  if (temp < MIN_TEMP) {
     fanSpeedPercent = 0;
-  } else if (temp > maxTemp) {
+  } else if (temp > MAX_TEMP) {
     fanSpeedPercent = 100;
   } else {
-    fanSpeedPercent = (100 - minFanSpeedPercent) * (temp - minTemp) / (maxTemp - minTemp) + minFanSpeedPercent;
+    fanSpeedPercent = (100 - MIN_FAN_SPEED_PERCENT) * (temp - MIN_TEMP) / (MAX_TEMP - MIN_TEMP) + MIN_FAN_SPEED_PERCENT;
   }
 
   Serial.print("Setting fan speed to ");
@@ -69,5 +69,5 @@ void loop() {
   Serial.println(" RPM");
 
   Serial.println();
-  delay(delayTime);
+  delay(DELAY_TIME);
 }
